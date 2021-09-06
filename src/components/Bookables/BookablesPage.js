@@ -4,7 +4,6 @@ import BookablesList from "./BookablesList";
 const BookablesPage = () => {
   return (
     <main className="bookables-page">
-      <p>Bookables!</p>
       <BookablesList />
     </main>
   );
