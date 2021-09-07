@@ -20,7 +20,9 @@ const reducer = (state, action) => {
 
     case "NEXT_BOOKABLE":
       //count bookables in current group
-      const count = state.bookables.filter((b) => b.group === state.group);
+      const count = state.bookables.filter(
+        (b) => b.group === state.group
+      ).length;
       return {
         ...state,
         bookableIndex: (state.bookableIndex + 1) % count,
