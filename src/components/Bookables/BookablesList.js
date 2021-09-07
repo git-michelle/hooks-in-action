@@ -17,15 +17,15 @@ const BookablesList = () => {
     setBookableIndex((index) => (index + 1) % bookablesInGroup.length);
   };
 
+  const changeGroup = (e) => {
+    setGroup(e.target.value);
+    setBookableIndex(0);
+  };
+
   return (
     <Fragment>
       <div>
-        <select
-          name=""
-          id=""
-          value={group}
-          onChange={(e) => setGroup(e.target.value)}
-        >
+        <select name="" id="" value={group} onChange={changeGroup}>
           {groups.map((g) => (
             <option key={g} value={g}>
               {g}
