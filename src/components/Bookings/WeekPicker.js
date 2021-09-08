@@ -22,7 +22,9 @@ const WeekPicker = ({ date }) => {
         </button>
       </p>
 
-      <p>{week.start.toDateString() - week.end.toDateString()}</p>
+      <p>
+        {week.start.toDateString()} - {week.end.toDateString()}
+      </p>
     </div>
   );
 };
