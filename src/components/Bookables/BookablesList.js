@@ -1,8 +1,9 @@
-import React, { Fragment, useReducer, useEffect } from 'react';
-// import { sessions, days } from '../../static.json';
+import { useReducer, useEffect, Fragment } from 'react';
+import { sessions, days } from '../../static.json';
 import { FaArrowRight } from 'react-icons/fa';
 import Spinner from '../UI/Spinner';
 import reducer from './reducer';
+
 import getData from '../../utils/api';
 
 const initialState = {
@@ -14,28 +15,27 @@ const initialState = {
 	error: false,
 };
 
-const BookablesList = () => {
+export default function BookablesList() {
 	const [state, dispatch] = useReducer(reducer, initialState);
-	// assign state values to local vars
+
 	const { group, bookableIndex, bookables } = state;
 	const { hasDetails, isLoading, error } = state;
 
 	const bookablesInGroup = bookables.filter((b) => b.group === group);
+	const bookable = bookablesInGroup[bookableIndex];
 	const groups = [...new Set(bookables.map((b) => b.group))];
 
-	//assign currently selected bookable to its own var
-	const bookable = bookablesInGroup[bookableIndex];
-
 	useEffect(() => {
-		dispatch({ type: 'FETCH_BOOKABLES_REQUEST' }); //start fetching data
+		dispatch({ type: 'FETCH_BOOKABLES_REQUEST' });
 
-		getData('http://localhost:3001/bookables') // fetch the data
+		getData('http://localhost:3001/bookables')
 			.then((bookables) =>
 				dispatch({
 					type: 'FETCH_BOOKABLES_SUCCESS',
 					payload: bookables,
 				})
 			)
+
 			.catch((error) =>
 				dispatch({
 					type: 'FETCH_BOOKABLES_ERROR',
@@ -44,35 +44,36 @@ const BookablesList = () => {
 			);
 	}, []);
 
-	const changeGroup = (e) => {
+	function changeGroup(e) {
 		dispatch({
 			type: 'SET_GROUP',
 			payload: e.target.value,
 		});
-	};
+	}
 
-	const changeBookable = (selectedIndex) => {
+	function changeBookable(selectedIndex) {
 		dispatch({
 			type: 'SET_BOOKABLE',
 			payload: selectedIndex,
 		});
-	};
+	}
 
-	const nextBookable = () => {
+	function nextBookable() {
 		dispatch({ type: 'NEXT_BOOKABLE' });
-	};
+	}
 
-	const toggleDetails = () => {
+	function toggleDetails() {
 		dispatch({ type: 'TOGGLE_HAS_DETAILS' });
-	};
+	}
 
 	if (error) {
 		return <p>{error.message}</p>;
 	}
+
 	if (isLoading) {
 		return (
 			<p>
-				<Spinner /> Loading bookables...{' '}
+				<Spinner /> Loading bookables...
 			</p>
 		);
 	}
@@ -80,41 +81,38 @@ const BookablesList = () => {
 	return (
 		<Fragment>
 			<div>
-				<select name="" id="" value={group} onChange={changeGroup}>
+				<select value={group} onChange={changeGroup}>
 					{groups.map((g) => (
-						<option key={g} value={g}>
+						<option value={g} key={g}>
 							{g}
 						</option>
 					))}
 				</select>
 
 				<ul className="bookables items-list-nav">
-					{bookablesInGroup.map((bookable, index) => (
-						<li key={bookable.id}>
-							<button
-								className={index === bookableIndex ? 'btn selected' : 'btn'}
-								onClick={() => changeBookable(index)}
-							>
-								{bookable.title}
+					{bookablesInGroup.map((b, i) => (
+						<li key={b.id} className={i === bookableIndex ? 'selected' : null}>
+							<button className="btn" onClick={() => changeBookable(i)}>
+								{b.title}
 							</button>
 						</li>
 					))}
 				</ul>
 				<p>
 					<button className="btn" onClick={nextBookable} autoFocus>
-						<FaArrowRight /> <span>Next</span>
+						<FaArrowRight />
+						<span>Next</span>
 					</button>
 				</p>
 			</div>
 
-			{/* Show details if bookable has them  */}
 			{bookable && (
 				<div className="bookable-details">
 					<div className="item">
 						<div className="item-header">
 							<h2>{bookable.title}</h2>
 							<span className="controls">
-								<label htmlFor="">
+								<label>
 									<input
 										type="checkbox"
 										checked={hasDetails}
@@ -127,19 +125,18 @@ const BookablesList = () => {
 
 						<p>{bookable.notes}</p>
 
-						{/* Show details if user checks the box  */}
 						{hasDetails && (
 							<div className="item-details">
 								<h3>Availability</h3>
 								<div className="bookable-availability">
 									<ul>
 										{bookable.days.sort().map((d) => (
-											<li key={d}>{bookable.days[d]}</li>
+											<li key={d}>{days[d]}</li>
 										))}
 									</ul>
 									<ul>
 										{bookable.sessions.map((s) => (
-											<li key={s}>{bookable.sessions[s]}</li>
+											<li key={s}>{sessions[s]}</li>
 										))}
 									</ul>
 								</div>
@@ -150,6 +147,4 @@ const BookablesList = () => {
 			)}
 		</Fragment>
 	);
-};
-
-export default BookablesList;
+}

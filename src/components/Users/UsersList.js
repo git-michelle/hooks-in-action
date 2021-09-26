@@ -1,20 +1,34 @@
 import React, { useState, useEffect, Fragment } from 'react';
+import getData from '../../utils/api';
+import Spinner from '../UI/Spinner';
 
 const UsersList = () => {
 	const [users, setUsers] = useState(null);
 	const [userIndex, setUserIndex] = useState(0);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
 
 	useEffect(() => {
-		const getUsers = async () => {
-			const res = await fetch('http://localhost:3001/users');
-			const data = await res.json();
-			setUsers(data);
-		};
-		getUsers();
+		getData('http://localhost:3001/users')
+			.then((data) => {
+				setUsers(data);
+				setLoading(false);
+			})
+			.catch((error) => {
+				setError(error);
+				setLoading(false);
+			});
 	}, []);
 
-	if (users === null) {
-		return <p>Loading...</p>;
+	if (error) {
+		return <p>{error.message}</p>;
+	}
+	if (loading) {
+		return (
+			<p>
+				<Spinner /> Loading...
+			</p>
+		);
 	}
 	const currentUser = users?.[userIndex];
 
