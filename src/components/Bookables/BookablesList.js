@@ -1,4 +1,4 @@
-import { useReducer, useEffect, Fragment } from 'react';
+import { useReducer, useEffect, Fragment, useRef } from 'react';
 import { sessions, days } from '../../static.json';
 import { FaArrowRight } from 'react-icons/fa';
 import Spinner from '../UI/Spinner';
@@ -43,6 +43,20 @@ export default function BookablesList() {
 				})
 			);
 	}, []);
+
+	const timerRef = useRef(null);
+
+	useEffect(() => {
+		timerRef.current = setInterval(() => {
+			dispatch({ type: 'NEXT_BOOKABLE' });
+		}, 3000);
+
+		return stopPresentation;
+	}, []);
+
+	const stopPresentation = () => {
+		clearInterval(timerRef.current);
+	};
 
 	function changeGroup(e) {
 		dispatch({
@@ -120,6 +134,9 @@ export default function BookablesList() {
 									/>
 									Show Details
 								</label>
+								<button className="btn" onClick={stopPresentation}>
+									Stop
+								</button>
 							</span>
 						</div>
 
